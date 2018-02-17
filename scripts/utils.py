@@ -2,7 +2,7 @@
 
 import os
 
-DATA_DIR = 'Gutenberg'
+DATA_DIR = '../Gutenberg'
 
 def organize_by_author():
     files = os.listdir(DATA_DIR)
@@ -31,3 +31,8 @@ def list_author_sizes():
             print('%s: %d' % (author, size))
             sizes.append((author, size))
     print(sorted(sizes, key=lambda x: x[1]))
+
+if __name__ == "__main__":
+    print("Running 'organize_by_author()'...")
+    organize_by_author()
+    print("Done.")

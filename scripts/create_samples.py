@@ -18,7 +18,7 @@ VAL_DIR = join(OUTPUT_DIR, "val")
 TEST_DIR = join(OUTPUT_DIR, "test")
 
 
-TRIM_MARGIN = 500
+TRIM_MARGIN = 300
 THRESHOLD = 4 * TRIM_MARGIN
 CHUNK_LENGTH = 150
 
@@ -42,9 +42,10 @@ def get_texts_in_dir(adir):
         if len(contents) < THRESHOLD:
             print("File %s has < %d words. Skipping." % (file, THRESHOLD))
 
+        # Trim each document, to get rid of table of contents and the like
         contents = contents[TRIM_MARGIN:-TRIM_MARGIN]
         
-        # Cut to multiple of 150. We don't want a chunk bridging two documents
+        # Cut to multiple of 150. Don't want a chunk bridging two documents later
         truncate_length = (len(contents) // CHUNK_LENGTH) * CHUNK_LENGTH
         contents = contents[:truncate_length]
         author_text.extend(contents)
