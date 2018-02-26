@@ -6,7 +6,6 @@ import shutil
 DATA_DIR = 'Gutenberg'
 BACKUP_DIR = 'Gutenberg.BAK'
 
-
 def organize_by_author():
     files = os.listdir(DATA_DIR)
     authors = set()
@@ -39,8 +38,6 @@ def list_author_sizes():
             sizes.append((author, size))
     for x, y in sorted(sizes, key=lambda x: x[1]):
         print x, y
-        count += 1
-        print count
 
 
 def trim_authors(threshold=1000000):
@@ -61,8 +58,3 @@ def remove_spaces():
                                                                       '_')))
             os.rename(os.path.join(DATA_DIR, author),
                       os.path.join(DATA_DIR, author.replace(' ', '_')))
-
-
-
-if __name__ == '__main__':
-    shorten_dir_names()
