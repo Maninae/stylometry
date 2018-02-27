@@ -1,0 +1,12 @@
+Abraham_Lincoln
+Charlotte_Bronte
+Edgar_Allan_Poe
+Jonathan_Swift
+O_Henry
+Rudyard_Kipling
+Robert_Louis_Stevenson
+Sir_Arthur_Conan_Doyle
+Mark_Twain
+Walt_Whitman
+P_B_Shelley
+James_Joyce
