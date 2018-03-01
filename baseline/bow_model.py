@@ -8,7 +8,7 @@ from util import encode, get_all_samples_from_adir
 
 
 class BowModel(object):
-    
+
     def __init__(self, traindir="../data/train"):
         self.traindir = traindir
         self.author_means = self.get_author_mean_encodings()
@@ -39,7 +39,7 @@ class BowModel(object):
 
         return author_means
 
-    def predict(x):
+    def predict(self, x):
         """ Numpy 1D-12 vector x. Find the author whose mean it is closest to.
         """
         x /= np.linalg.norm(x)
