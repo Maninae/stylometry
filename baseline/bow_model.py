@@ -3,8 +3,8 @@ import pickle
 from os.path import join
 from os import listdir
 
-import baseline.util
-from baseline.util import encode, get_all_samples_from_adir
+import util
+from util import encode, get_all_samples_from_adir
 
 
 class BowModel(object):
@@ -12,7 +12,6 @@ class BowModel(object):
     def __init__(self, traindir="../data/train"):
         self.traindir = traindir
         self.author_means = self.get_author_mean_encodings()
-        print("We have author means: %s" % str(self.author_means))
 
     def get_mean_encoding(self, authorname):
         samples = get_all_samples_from_adir(authorname)

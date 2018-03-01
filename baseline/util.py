@@ -13,7 +13,6 @@ SYMBOLS = ['.', ',', '?', '!', '\'', '"', ':', ';', '-', '(', ')', NUM]
 symbol_to_idx = {}
 for i, s in enumerate(SYMBOLS):
     symbol_to_idx[s] = i
-print("We have the symbol to idx mapping: %s" % str(symbol_to_idx))
 
 def encode(text):
     text = text.split()

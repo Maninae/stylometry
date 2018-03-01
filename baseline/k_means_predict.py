@@ -1,7 +1,7 @@
-from baseline.bow_model import BowModel
+from bow_model import BowModel
 
-import baseline.util # need this to initialize global vars
-from baseline.util import get_all_samples_from_adir, encode
+import util # need this to initialize global vars
+from util import get_all_samples_from_adir, encode
 import os
 
 MEANS_FILE = ''  # A dictionary from author name to mean vectors
