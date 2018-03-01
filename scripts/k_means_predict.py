@@ -1,5 +1,7 @@
 from baseline.bow_model import BowModel
-from baseline.util import get_all_samples_from_adir
+
+import baseline.util # need this to initialize global vars
+from baseline.util import get_all_samples_from_adir, encode
 import os
 
 MEANS_FILE = ''  # A dictionary from author name to mean vectors
@@ -13,13 +15,16 @@ incorrect = 0
 def evaluate(d=DEV_DIR):
     global correct
     global incorrect
+    
     model = BowModel()
+    
     for author in os.listdir(d):
         if author[0] != '.':
-            samples = get_all_samples_from_adir(author, DEV_DIR)
-            print samples
+            samples = get_all_samples_from_adir(author, datadir=DEV_DIR)
+
             for s in samples:
-                a = model.predict(s)
+                s_encoding = encode(s)
+                a = model.predict(s_encoding)
                 if a == author:
                     correct += 1
                 else:
@@ -27,5 +32,5 @@ def evaluate(d=DEV_DIR):
     print('Correct: %d' % correct)
     print('Incorrect: %d' % incorrect)
 
-
-evaluate()
+if __name__ == "__main__":
+    evaluate()

@@ -3,8 +3,8 @@ import pickle
 from os.path import join
 from os import listdir
 
-import util
-from util import encode, get_all_samples_from_adir
+import baseline.util
+from baseline.util import encode, get_all_samples_from_adir
 
 
 class BowModel(object):
@@ -12,6 +12,7 @@ class BowModel(object):
     def __init__(self, traindir="../data/train"):
         self.traindir = traindir
         self.author_means = self.get_author_mean_encodings()
+        print("We have author means: %s" % str(self.author_means))
 
     def get_mean_encoding(self, authorname):
         samples = get_all_samples_from_adir(authorname)
@@ -29,7 +30,7 @@ class BowModel(object):
                     new.append(c)
             return str(new)
 
-        authornames = [an for an in listdir(self.traindir) if stripped(an).isalpha()]
+        authornames = [an for an in listdir(self.traindir) if an[0] != '.']
 
         author_means = {}
         for an in authornames:
@@ -43,7 +44,7 @@ class BowModel(object):
         """ Numpy 1D-12 vector x. Find the author whose mean it is closest to.
         """
         x /= np.linalg.norm(x)
-        scores = [(an, x * self.author_means[an]) for an in self.author_means]
+        scores = [(an, x.dot(self.author_means[an])) for an in self.author_means]
         sorted_scores = sorted(scores, reverse=True, key=lambda x: x[1])
 
         best_author, best_score = sorted_scores[0]
