@@ -22,9 +22,8 @@ TEST_DIR = join(OUTPUT_DIR, 'test')
 PUNCS = set('.,?!\'":;-()')
 
 
-TRIM_MARGIN = 100
-THRESHOLD = 2000
-CHUNK_LENGTH = 500
+THRESHOLD = 200
+CHUNK_LENGTH = 100
 
 def get_author_dirs(path=DATA_DIR):
     print('Getting list of authors from: %s' % AUTHOR_LIST_FILE)
@@ -85,7 +84,7 @@ def distribute_into_output_dir(authorname, puncs):
 
         # access a chunk
         chunk = puncs[chop:chop+CHUNK_LENGTH]
-        payload = ' '.join(chunk)
+        payload = ' '.join(['%d %s' % (x, y) for x, y in chunk])
         chop += CHUNK_LENGTH
 
         # Determine if it goes into train, dev, test
@@ -104,7 +103,7 @@ def distribute_into_output_dir(authorname, puncs):
         if index % 100 == 0:
             print('At index %d...' % index)
 
-    print('Done. total %d chunks (of 150 words) created.' % index)
+    print('Done. total %d chunks (of %d puncs) created.' % (index, CHUNK_SIZE))
 
 if __name__ == '__main__':
     author_dirs = get_author_dirs()
@@ -115,10 +114,12 @@ if __name__ == '__main__':
     errored_authors = []
 
     for adir in remaining_adirs: # adir is the author name string
-        try:
+        #try:
             puncs = get_puncs_in_dir(adir)
             distribute_into_output_dir(adir, puncs)
+            '''
         except Exception as e:
             print('Got error: %s' % str(e))
             print('Author %s may not be finished!' % adir)
             errored_authors.append(adir)
+            '''
