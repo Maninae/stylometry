@@ -96,7 +96,7 @@ def distribute_into_output_dir(authorname, tokens):
                                                       else TEST_DIR)
 
         # have author, and index padded up to 10 places
-        chunk_name = '%s__%010d.txt' % (authorname, index)
+        chunk_name = '%s__%010d.pkl' % (authorname, index)
 
         destination = join(split_dir, authorname, chunk_name)
 

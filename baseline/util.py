@@ -1,6 +1,12 @@
+import pickle
 import numpy as np
 
+from os.path import join
+from os import listdir
+
+
 __NUM__ = "__NUM__"
+traindir = '../data/train'
 
 __SYMBOLS__ = ['.', ',', '?', '!', '\'', '"', ':', ';', '-', '(', ')', __NUM__]
 
@@ -24,9 +30,14 @@ def encode(text):
     return vec
 
 
-def text_of_file(filepath):
-    content = ""
-    with open(filepath, 'r') as f:
-        content = f.readlines()
+def open_pickle(filepath):
+    content = pickle.load(filepath)
+    return content
 
+
+def get_all_samples_from_adir(authorname):
+    adir = join(traindir, authorname)
+    filenames = [fn for fn in listdir(adir) if fn[-4:] == '.pkl']
+    samples = [open_pickle(join(adir, fn)) for fn in filenames]
+    return samples
 
