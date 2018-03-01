@@ -1,6 +1,6 @@
 import os
 from os.path import join, isdir
-import cPickle as pickle
+import pickle
 import random
 
 '''
@@ -21,9 +21,9 @@ VAL_DIR = join(OUTPUT_DIR, 'val')
 TEST_DIR = join(OUTPUT_DIR, 'test')
 PUNCS = set('.,?!\'":;-()')
 
+THRESHOLD = 2000
+CHUNK_LENGTH = 1000
 
-THRESHOLD = 200
-CHUNK_LENGTH = 100
 
 def get_author_dirs(path=DATA_DIR):
     print('Getting list of authors from: %s' % AUTHOR_LIST_FILE)
@@ -35,14 +35,17 @@ def get_author_dirs(path=DATA_DIR):
     print('We found authors: %s' % str(alist))
     return alist
 
+
+def compress_tokens(l):
+    punc_idx = [-1] + [i for i, x in enumerate(l) if x in PUNCS]
+    return [(punc_idx[i] - punc_idx[i-1] - 1, l[punc_idx[i]]) for i in
+            range(1, len(punc_idx))]
+
+
 def strip_to_puncs(s):
     import re
-    tokens = re.findall(r'[\w\s]*[\w]|[\.,\?!\'":;-]|[(]|[)]', s)
-    tokens = [len(t.split()) if t not in PUNCS else t for t in tokens]
-    tokens = [((tokens[i-1], tokens[i]) if i >= 1 and tokens[i-1] not in PUNCS
-              else (0, tokens[i])) for i in range(len(tokens)) if tokens[i] in
-                                                 PUNCS]
-    return tokens
+    return re.findall(r'[\w]+|[\.,\?!\'":;-]|[(]|[)]', s)
+
 
 def get_puncs_in_dir(adir):
     puncs = [] # list of punctuations from all texts under the author
@@ -58,7 +61,7 @@ def get_puncs_in_dir(adir):
 
         print('length of content (# puncs) for %s, %d.' % (fil, len(contents)))
         if len(contents) < THRESHOLD:
-            print('File %s has < %d puncuations. Skipping.' % (fil, THRESHOLD))
+            print('File %s has < %d tokens. Skipping.' % (fil, THRESHOLD))
 
         # Cut to multiple of CHUNK_LENGTH.
         # Don't want a chunk bridging two documents later
@@ -69,7 +72,9 @@ def get_puncs_in_dir(adir):
     print('Aggregated text has %d puncs (author %s).' % (len(puncs), adir))
     return puncs
 
+
 def distribute_into_output_dir(authorname, puncs):
+    from itertools import accumulate
     assert(len(puncs) % CHUNK_LENGTH == 0)
     print('Distributing chunks into dir for %s' % authorname)
 
@@ -84,7 +89,8 @@ def distribute_into_output_dir(authorname, puncs):
 
         # access a chunk
         chunk = puncs[chop:chop+CHUNK_LENGTH]
-        payload = ' '.join(['%d %s' % (x, y) for x, y in chunk])
+        compressed = compress_tokens(chunk)
+        payload = ' '.join(['%d %s' % (x, y) for x, y in compressed])
         chop += CHUNK_LENGTH
 
         # Determine if it goes into train, dev, test
@@ -96,14 +102,14 @@ def distribute_into_output_dir(authorname, puncs):
         destination = join(split_dir, authorname, chunk_name)
 
         # put in destination under author with that name
-        with open(destination, 'w') as f:
+        with open(destination, 'wb') as f:
             pickle.dump(payload, f)
 
         index += 1
         if index % 100 == 0:
             print('At index %d...' % index)
 
-    print('Done. total %d chunks (of %d puncs) created.' % (index, CHUNK_SIZE))
+    print('Done. total %d chunks (of %d tokens) created.' % (index, CHUNK_LENGTH))
 
 if __name__ == '__main__':
     author_dirs = get_author_dirs()
