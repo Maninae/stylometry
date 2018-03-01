@@ -26,12 +26,10 @@ CHUNK_LENGTH = 1000
 
 
 def get_author_dirs(path=DATA_DIR):
-    print('Getting list of authors from: %s' % AUTHOR_LIST_FILE)
-    with open(AUTHOR_LIST_FILE) as f:
-        author_list = set(map(str.strip, f.read().splitlines()))
-
+    def is_author(name):
+        return ''.join(name.split('_')).isalpha()
     print('Retrieving the authors under: %s' % path)
-    alist = [d for d in os.listdir(path) if d in author_list]
+    alist = [d for d in os.listdir(path) if is_author(d)]
     print('We found authors: %s' % str(alist))
     return alist
 
