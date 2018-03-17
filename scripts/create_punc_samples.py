@@ -13,9 +13,8 @@ punctuation only. Then the file is split into consecutive chunks of 500
 punctuations, and distributed into train/val/test with ratio 80/10/10 resp.
 '''
 
-DATA_DIR = '../Gutenberg'  # change this to be actual dir
-OUTPUT_DIR = '../data'
-AUTHOR_LIST_FILE = 'unique_authors.txt'
+DATA_DIR = 'Gutenberg'  # change this to be actual dir
+OUTPUT_DIR = 'data'
 TRAIN_DIR = join(OUTPUT_DIR, 'train')
 VAL_DIR = join(OUTPUT_DIR, 'val')
 TEST_DIR = join(OUTPUT_DIR, 'test')

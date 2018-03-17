@@ -4,8 +4,8 @@ from keras.regularizers import l2
 
 from keras import backend as K
 
-from util import swish, custom_objects_dict
-from util import _NUM_AUTHORS, _NUM_TOKENS, _INPUT_LENGTH # (11, 12, 250)
+from model.util import swish, custom_objects_dict
+from model.util import _NUM_AUTHORS, _NUM_TOKENS, _INPUT_LENGTH # (11, 12, 250)
 
 
 testable_models = []
@@ -132,7 +132,7 @@ def __LSTM_model(nb_lstm_units,
 
     # If we are doing stacked lstm, need return_sequences=True
     assert (type(nb_lstm_units) is list) == return_sequences
-    
+
     if type(nb_lstm_units) is not list: # List of 1, if not a list
         nb_lstm_units = [nb_lstm_units]
 
@@ -156,7 +156,7 @@ def __LSTM_model(nb_lstm_units,
     #   if return_state: a list of tensors. The first tensor is the output. The remaining tensors are the last states, each with shape (batch_size, nb_units).
     #   if return_sequences: 3D tensor with shape (batch_size, timesteps, nb_units).
     #   else, 2D tensor with shape (batch_size, nb_units).
-    
+
     if output_average_state: # Intuition says this is prob. not necessary
         print("output_average_state=True. "
               "Output of LSTM is average of all timestep outputs.")
