@@ -8,7 +8,7 @@ from util import swish, custom_objects_dict
 from util import _NUM_AUTHORS, _NUM_TOKENS, _INPUT_LENGTH # (11, 12, 250)
 
 
-__testable_models = []
+testable_models = []
 
 # Debug printing
 def printl(obj, name):
@@ -17,7 +17,7 @@ def printl(obj, name):
 
 # Decorator for keeping track of models to test
 def testable(func):
-    __testable_models.append(func)
+    testable_models.append(func)
     return func
 
 
@@ -76,8 +76,9 @@ def conv_model(embedding_dim=8,
             x = Dropout(dense_dropout)(x)
 
     # Apply final dense layer to classify into 11 authors
-    # NO SOFTMAX activation! The keras/tf softmax_crossentropy loss fn takes care of it.
+    # Keras categorical_crossentropy expects softmax
     x = Dense(_NUM_AUTHORS, name='classification_output')(x)
+    x = Activation('softmax')(x)
 
     printl(main_input, 'main_input')
     printl(x, 'output')
@@ -182,8 +183,9 @@ def __LSTM_model(nb_lstm_units,
             x = Dropout(dense_dropout)(x)
 
     # Apply final dense layer to classify into 11 authors
-    # NO SOFTMAX activation! The keras/tf softmax_crossentropy loss fn takes care of it.
+    # Keras categorical_crossentropy expects softmax
     x = Dense(_NUM_AUTHORS, name='classification_output')(x)
+    x = Activation('softmax')(x)
 
     printl(main_input, 'main_input')
     printl(x, 'output')
@@ -193,7 +195,7 @@ def __LSTM_model(nb_lstm_units,
 if __name__ == "__main__":
     print()
 
-    for model_fn in __testable_models:
+    for model_fn in testable_models:
         print()
         print("Found model: %s." % model_fn.__name__)
         model = model_fn()

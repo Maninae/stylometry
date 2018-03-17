@@ -1,4 +1,5 @@
 import keras.backend as K
+from keras.utils import np_utils
 
 # CONSTANTS
 _NUM_AUTHORS = 11
@@ -14,13 +15,12 @@ custom_objects_dict = {
     'swish' : swish
 }
 
-def preprocess(input_tensor):
+def preprocess(x):
     """
     args:
-      input_tensor: (None, input_length) tensor of ints
+      x: (None, input_length) ndarray of ints
     return:
-      (None, input_length, num_classes=_NUM_TOKENS=12) tensor of one-hots
+      (None, input_length, num_classes=_NUM_TOKENS=12) ndarray, one hot
     """
-    #embeddings = 
-    return K.one_hot(input_tensor, _NUM_TOKENS)
-    #return embeddings
+    return np_utils.to_categorical(x, _NUM_TOKENS)
+
