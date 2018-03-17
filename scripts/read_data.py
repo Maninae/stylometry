@@ -46,10 +46,21 @@ def read_data(puncs_map, authors, authors_map, d=TRAIN_DIR):
             np.asarray(all_authors))
 
 
+def load_data(split='train'):
+    if split == 'train':
+        d = TRAIN_DIR
+    if split == 'val':
+        d = VAL_DIR
+    if split == 'test':
+        d = TEST_DIR
+    return (pickle.load(open(join(d, 'tokens.pkl'), 'rb')),
+            pickle.load(open(join(d, 'authors.pkl'), 'rb')))
+
+
 if __name__ == '__main__':
     p_map = get_puncs_map()
     a, a_map = get_authors_map()
     for d in [TRAIN_DIR, VAL_DIR, TEST_DIR]:
         tokens, authors = read_data(p_map, a, a_map, d)
-        np.save(join(d, 'tokens'), tokens)
-        np.save(join(d, 'authors'), authors)
+        pickle.dump(tokens, open(join(d, 'tokens.pkl'), 'wb'))
+        pickle.dump(authors, open(join(d, 'authors.pkl'), 'wb'))
