@@ -1,10 +1,28 @@
 import keras.backend as K
-from keras.utils import np_utils
+from keras.callbacks import ModelCheckpoint
 
 # CONSTANTS
 _NUM_AUTHORS = 11
 _NUM_TOKENS = 12
 _INPUT_LENGTH = 250
+
+
+# Dictionary for weighting the loss on each author's data.
+# Authors with fewer data samples will have a greater loss, to
+#   avoid models biasing themselves toward higher freq authors.
+class_weight_dict = {
+    0:  1., # Abraham Lincoln? I have no idea which indices map to which authors
+    1:  1.,
+    2:  1.,
+    3:  1.,
+    4:  1.,
+    5:  1.,
+    6:  1.,
+    7:  1.,
+    8:  1.,
+    9:  1.,
+    10: 1.
+}
 
 # EDIT: Unlikely to swap out any LSTM activations for this.
 #   Can swish activate dense layers, but not deep enough.
@@ -15,12 +33,13 @@ custom_objects_dict = {
     'swish' : swish
 }
 
-def preprocess(x):
-    """
-    args:
-      x: (None, input_length) ndarray of ints
-    return:
-      (None, input_length, num_classes=_NUM_TOKENS=12) ndarray, one hot
-    """
-    return np_utils.to_categorical(x, _NUM_TOKENS)
 
+
+def get_checkpointer(model_name):
+    # Save everything, just in case
+    filepath = "weights/%s-{epoch:02d}-loss={loss:.4f}-vloss={val_loss:.4f}-tacc={acc:.3f}-vacc={val_acc:.3f}.h5" % model_name
+    checkpointer = ModelCheckpoint(filepath=filepath,
+                                   verbose=1,
+                                   save_best_only=False)
+
+    return checkpointer

@@ -15,11 +15,11 @@ def printl(obj, name):
     print("%s: %s" % (name, str(obj)))
 
 
-# Decorator for keeping track of models to test
+# Decorator for keeping track of models that are completed, ready to test
 def testable(func):
     testable_models.append(func)
     return func
-
+# Upon import of |stylometry_models|, `testable_models` will be populated.
 
 ######################################
 
@@ -82,7 +82,10 @@ def conv_model(embedding_dim=8,
 
     printl(main_input, 'main_input')
     printl(x, 'output')
-    return Model(inputs=main_input, outputs=x)
+    model = Model(inputs=main_input, outputs=x)
+    model.name = "conv_model"
+
+    return model
 
 
 @testable
@@ -93,7 +96,8 @@ def vanilla_LSTM_model():
     return __LSTM_model(nb_lstm_units=256,
                         nb_dense_units=128,
                         lstm_dropout=0.2,
-                        dense_dropout=0.2)
+                        dense_dropout=0.2,
+                        model_name="vanilla_LSTM_model")
 
 @testable
 def stacked_2_LSTM_model():
@@ -103,7 +107,8 @@ def stacked_2_LSTM_model():
                         nb_dense_units=64,
                         lstm_dropout=0.2,
                         dense_dropout=0.2,
-                        return_sequences=True)
+                        return_sequences=True,
+                        model_name="stacked_2_LSTM_model")
 
 @testable
 def stacked_3_LSTM_model():
@@ -113,7 +118,8 @@ def stacked_3_LSTM_model():
                         nb_dense_units=64,
                         lstm_dropout=0.2,
                         dense_dropout=0.2,
-                        return_sequences=True)
+                        return_sequences=True,
+                        model_name="stacked_3_LSTM_model")
 
 def __LSTM_model(nb_lstm_units,
                  nb_dense_units,
@@ -125,7 +131,9 @@ def __LSTM_model(nb_lstm_units,
                  # layers.LSTM() parameters to pass on
                  return_sequences=False,
                  return_state=False,
-                 go_backwards=False):
+                 go_backwards=False,
+                 # Miscellaneous
+                 model_name=None):
     # input: (batch, input_length, num_classes) tensor. one-hots already expanded
     main_input = Input(shape=(_INPUT_LENGTH, _NUM_TOKENS,), dtype='float32', name='main_input')
     x = main_input
@@ -189,7 +197,16 @@ def __LSTM_model(nb_lstm_units,
 
     printl(main_input, 'main_input')
     printl(x, 'output')
-    return Model(inputs=main_input, outputs=x)
+    model = Model(inputs=main_input, outputs=x)
+
+    # Name the model so we can save its name later
+    if model_name is not None:
+        model.name = model_name
+    else:
+        # e.g. "LSTM_128_128"
+        model.name = "LSTM_model_" + "_".join(map(str, nb_lstm_units))
+
+    return model
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ import pickle
 from datetime import datetime
 
 from model import stylometry_models as sm
+from model.model_operations import ModelOperations
 from model.util import get_checkpointer, class_weight_dict
 
 from utils.dataflow import load_data, preprocess
@@ -95,10 +96,10 @@ def parse_arguments_from_command():
 
 """
 Usage:
-python3 train_and_test.py --new_model conv_model
-python3 train_and_test.py --new_model vanilla_LSTM_model
-python3 train_and_test.py --new_model stacked_2_LSTM_model
-python3 train_and_test.py --new_model stacked_3_LSTM_model
+python3 train.py --new_model conv_model
+python3 train.py --new_model vanilla_LSTM_model
+python3 train.py --new_model stacked_2_LSTM_model
+python3 train.py --new_model stacked_3_LSTM_model
 """
 
 if __name__ == "__main__":
