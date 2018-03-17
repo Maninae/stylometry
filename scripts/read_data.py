@@ -3,9 +3,9 @@ import os
 from os.path import join
 import pickle
 
-TRAIN_DIR = '../data/train'
-VAL_DIR = '../data/val'
-TEST_DIR = '../data/test'
+TRAIN_DIR = 'data/train'
+VAL_DIR = 'data/val'
+TEST_DIR = 'data/test'
 
 PUNCS = '.,?!\'":;-()'
 
@@ -13,7 +13,7 @@ PUNCS = '.,?!\'":;-()'
 def get_puncs_map():
     puncs = {c: i+1 for i, c in enumerate(PUNCS)}
     puncs['%'] = 0
-    with open('../puncs_map.pkl', 'wb') as f:
+    with open('puncs_map.pkl', 'wb') as f:
         pickle.dump(puncs, f)
     return puncs
 
@@ -24,7 +24,7 @@ def get_authors_map():
     authors = [a for a in os.listdir(TRAIN_DIR) if is_author(a)]
     authors.sort()
     authors_map = {a: i for i, a in enumerate(authors)}
-    with open('../authors_map.pkl', 'wb') as f:
+    with open('authors_map.pkl', 'wb') as f:
         pickle.dump(authors_map, f)
     return authors, authors_map
 
@@ -37,24 +37,13 @@ def read_data(puncs_map, authors, authors_map, d=TRAIN_DIR):
         for f in os.listdir(join(d, author)):
             if f.endswith('.pkl'):
                 tokens = pickle.load(open(join(d, author, f), 'rb'))
-                tokens = map(puncs_map.get, tokens)
+                tokens = [puncs_map[i] for i in tokens]
                 all_tokens.append(tokens)
                 author_vec = np.zeros(len(authors))
                 author_vec[authors_map[author]] = 1
                 all_authors.append(author_vec)
     return (np.asarray(all_tokens),
             np.asarray(all_authors))
-
-
-def load_data(split='train'):
-    if split == 'train':
-        d = TRAIN_DIR
-    if split == 'val':
-        d = VAL_DIR
-    if split == 'test':
-        d = TEST_DIR
-    return (pickle.load(open(join(d, 'tokens.pkl'), 'rb')),
-            pickle.load(open(join(d, 'authors.pkl'), 'rb')))
 
 
 if __name__ == '__main__':
