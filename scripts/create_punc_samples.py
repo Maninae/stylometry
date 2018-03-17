@@ -22,7 +22,7 @@ TEST_DIR = join(OUTPUT_DIR, 'test')
 PUNCS = set('.,?!\'":;-()')
 
 THRESHOLD = 2000
-CHUNK_LENGTH = 1000
+CHUNK_LENGTH = 250
 
 
 def get_author_dirs(path=DATA_DIR):
@@ -38,6 +38,10 @@ def compress_tokens(l):
     punc_idx = [-1] + [i for i, x in enumerate(l) if x in PUNCS]
     return [(punc_idx[i] - punc_idx[i-1] - 1, l[punc_idx[i]]) for i in
             range(1, len(punc_idx))]
+
+
+def replace_words(p):
+    return [w if w in PUNCS else '%' for w in p]
 
 
 def strip_to_puncs(s):
@@ -74,7 +78,6 @@ def get_puncs_in_dir(adir):
 def distribute_into_output_dir(authorname, tokens):
     assert(len(tokens) % CHUNK_LENGTH == 0)
     print('Distributing chunks into dir for %s' % authorname)
-
     for split in [TRAIN_DIR, VAL_DIR, TEST_DIR]:
         if not isdir(join(split, authorname)):
             print('Made new dir for %s, split %s' % (authorname, split))
@@ -86,8 +89,7 @@ def distribute_into_output_dir(authorname, tokens):
 
         # access a chunk
         chunk = tokens[chop:chop+CHUNK_LENGTH]
-        compressed = compress_tokens(chunk)
-        payload = ' '.join(['%d %s' % (x, y) for x, y in compressed])
+        payload = replace_words(chunk)
         chop += CHUNK_LENGTH
 
         # Determine if it goes into train, dev, test
@@ -113,6 +115,11 @@ def distribute_into_output_dir(authorname, tokens):
 
 
 if __name__ == '__main__':
+    for split in [TRAIN_DIR, VAL_DIR, TEST_DIR]:
+        if not isdir(split):
+            print('Made new dir for %s' % (split))
+            os.makedirs(split)
+
     author_dirs = get_author_dirs()
     # any split works (except train, removed from those for space)
     existing_adirs = get_author_dirs(path=TEST_DIR)
