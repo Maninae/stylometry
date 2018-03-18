@@ -41,7 +41,7 @@ custom_objects_dict = {
 
 def get_checkpointer(model_name):
     # Save everything, just in case
-    filepath = "weights/%s-{epoch:02d}-loss={loss:.4f}-vloss={val_loss:.4f}-tacc={acc:.3f}-vacc={val_acc:.3f}.h5" % model_name
+    filepath = "weights/%s/%s-ep{epoch:02d}-loss={loss:.4f}-vloss={val_loss:.4f}-tacc={acc:.3f}-vacc={val_acc:.3f}.h5" % (model_name, model_name)
     checkpointer = ModelCheckpoint(filepath=filepath,
                                    verbose=1,
                                    save_best_only=False)
