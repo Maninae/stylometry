@@ -1,10 +1,9 @@
 # Project specific
 Gutenberg/
-data/
+data/*/*/
 archive/
 Testenberg/
 Gutenberg.BAK/
-*.pkl
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
