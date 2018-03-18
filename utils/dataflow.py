@@ -1,6 +1,7 @@
 import pickle
 from os.path import join
 from keras.utils import np_utils
+from model.util import _NUM_TOKENS
 
 TRAIN_DIR = 'data/train'
 VAL_DIR = 'data/val'
@@ -18,7 +19,7 @@ def load_data(split='train'):
             pickle.load(open(join(d, 'authors.pkl'), 'rb')))
 
 
-def preprocess(x): # Expands to one hot
+def preprocess_input(x):  # Expands to one hot
     """
     args:
       x: (None, input_length) ndarray of ints
@@ -26,5 +27,3 @@ def preprocess(x): # Expands to one hot
       (None, input_length, num_classes=_NUM_TOKENS=12) ndarray, one hot
     """
     return np_utils.to_categorical(x, _NUM_TOKENS)
-
-

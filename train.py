@@ -1,11 +1,14 @@
+import argparse
 import numpy as np
 import pickle
 from datetime import datetime
 
+from keras.optimizers import Adam
+
 from model import stylometry_models as sm
 from model.util import get_checkpointer, class_weight_dict
 
-from utils.dataflow import load_data, preprocess
+from utils.dataflow import load_data, preprocess_input
 
 
 valid_model_names = [fn.__name__ for fn in sm.testable_models]
@@ -20,33 +23,36 @@ models_requiring_preprocess = [
 
 
 class Config(object):
-    batch_size = 32
+    batch_size = 128
     epochs = 30
-    optimizer = 'adam'
-    loss = 'categorial_crossentropy'
+    optimizer = Adam(lr=1e-4)
+    loss = 'categorical_crossentropy'
     metrics_list = ['accuracy']
 
 
+config = Config()
+
 ##########################################
 
-def train(self, model, preprocess=True):
+
+def train(model, preprocess=True):
     X_train, Y_train = load_data('train')
     X_val, Y_val = load_data('val')
 
     if preprocess:  # Preprocessing turns ints into one-hot vectors
-        X_train = preprocess(X_train)
-        X_val = preprocess(X_val)
+        X_train = preprocess_input(X_train)
+        X_val = preprocess_input(X_val)
 
-    model.compile(loss=self.config.loss,
-                  optimizer=self.config.optimizer,
-                  metrics=self.config.metrics_list)
+    model.compile(loss=config.loss,
+                  optimizer=config.optimizer,
+                  metrics=config.metrics_list)
 
     checkpointer = get_checkpointer(model.name)
 
     history = model.fit(x=X_train,
                         y=Y_train,
-                        batch_size=self.config.batch_size,
-                        epochs=self.config.epochs,
+                        batch_size=config.batch_size,
+                        epochs=config.epochs,
                         class_weight=class_weight_dict,
                         verbose=1,
                         validation_data=(X_val, Y_val),
@@ -60,11 +66,11 @@ def test(self, model, preprocess=True):
     X_test, Y_test = load_data('test')
 
     if preprocess:  # Preprocessing turns ints into one-hot vectors
-        X_test = preprocess(X_test)
+        X_test = preprocess_input(X_test)
 
     eval_output = model.evaluate(x=X_test,
                                  y=Y_test,
-                                 batch_size=self.config.batch_size,
+                                 batch_size=config.batch_size,
                                  verbose=1)
 
     labeled_eval_output = zip(model.metrics_names, eval_output)
@@ -90,7 +96,7 @@ def parse_arguments_from_command():
     def validate_args(args):
         """ Validations that the args are correct """
         assert args.model_name in valid_model_names
-        assert not bool(args.load_path and args.model_name)
+        assert not bool(args.stored_model_path and args.model_name)
 
     args = parser.parse_args()
     validate_args(args)
@@ -99,10 +105,10 @@ def parse_arguments_from_command():
 
 """
 Usage:
-python3 train_and_test.py --new_model conv_model
-python3 train_and_test.py --new_model vanilla_LSTM_model
-python3 train_and_test.py --new_model stacked_2_LSTM_model
-python3 train_and_test.py --new_model stacked_3_LSTM_model
+python3 train.py --new_model conv_model
+python3 train.py --new_model vanilla_LSTM_model
+python3 train.py --new_model stacked_2_LSTM_model
+python3 train.py --new_model stacked_3_LSTM_model
 """
 
 if __name__ == "__main__":
