@@ -10,29 +10,33 @@ _INPUT_LENGTH = 250
 # Dictionary for weighting the loss on each author's data.
 # Authors with fewer data samples will have a greater loss, to
 #   avoid models biasing themselves toward higher freq authors.
-class_weight_dict = {
-    0:  1., # Abraham Lincoln? I have no idea which indices map to which authors
-    1:  1.,
-    2:  1.,
-    3:  1.,
-    4:  1.,
-    5:  1.,
-    6:  1.,
-    7:  1.,
-    8:  1.,
-    9:  1.,
-    10: 1.
+author_counts = {
+    0: 1910.,
+    1: 2765.,
+    2: 1704.,
+    3: 1657.,
+    4: 2260.,
+    5: 4104.,
+    6: 3335.,
+    7: 6397.,
+    8: 5169.,
+    9: 12571.,
+    10: 1816.
 }
+class_weight_dict = {k: max(author_counts.values()) / author_counts[k] for k in
+                     author_counts}
 
 # EDIT: Unlikely to swap out any LSTM activations for this.
 #   Can swish activate dense layers, but not deep enough.
+
+
 def swish(x):
     return x * K.sigmoid(x)
 
-custom_objects_dict = {
-    'swish' : swish
-}
 
+custom_objects_dict = {
+    'swish': swish
+}
 
 
 def get_checkpointer(model_name):

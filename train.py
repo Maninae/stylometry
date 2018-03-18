@@ -17,6 +17,8 @@ models_requiring_preprocess = [
 ]
 
 # Default config settings for model training
+
+
 class Config(object):
     batch_size = 32
     epochs = 30
@@ -31,14 +33,14 @@ def train(self, model, preprocess=True):
     X_train, Y_train = load_data('train')
     X_val, Y_val = load_data('val')
 
-    if preprocess: # Preprocessing turns ints into one-hot vectors
+    if preprocess:  # Preprocessing turns ints into one-hot vectors
         X_train = preprocess(X_train)
         X_val = preprocess(X_val)
 
     model.compile(loss=self.config.loss,
                   optimizer=self.config.optimizer,
                   metrics=self.config.metrics_list)
-    
+
     checkpointer = get_checkpointer(model.name)
 
     history = model.fit(x=X_train,
@@ -57,14 +59,14 @@ def train(self, model, preprocess=True):
 def test(self, model, preprocess=True):
     X_test, Y_test = load_data('test')
 
-    if preprocess: # Preprocessing turns ints into one-hot vectors
+    if preprocess:  # Preprocessing turns ints into one-hot vectors
         X_test = preprocess(X_test)
 
     eval_output = model.evaluate(x=X_test,
                                  y=Y_test,
                                  batch_size=self.config.batch_size,
                                  verbose=1)
-    
+
     labeled_eval_output = zip(model.metrics_names, eval_output)
     # ret a list of [('loss', scalar), ('accuracy', <scalar>), ...]
     return labeled_eval_output
@@ -75,13 +77,15 @@ def test(self, model, preprocess=True):
 
 def parse_arguments_from_command():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--debug",
-            help="Debug mode: load instead the coco-debug directory as data",
-            action='store_true')
-    parser.add_argument("--load_path", dest='stored_model_path',
-            help="optional path argument, if we want to load an existing model")
+    parser.add_argument(
+        "--debug",
+        help="Debug mode: load instead the coco-debug directory as data",
+        action='store_true')
+    parser.add_argument(
+        "--load_path", dest='stored_model_path',
+        help="optional path argument, if we want to load an existing model")
     parser.add_argument("--new_model", dest='model_name',
-            help="Type of model in model.py we want to run")
+                        help="Type of model in model.py we want to run")
 
     def validate_args(args):
         """ Validations that the args are correct """
@@ -102,7 +106,7 @@ python3 train_and_test.py --new_model stacked_3_LSTM_model
 """
 
 if __name__ == "__main__":
-    args = parse_arguments_from_command()    
+    args = parse_arguments_from_command()
     print("[db-training] We got args: %s" % str(args))
     model_name = args.model_name
     stored_model_path = args.stored_model_path
@@ -119,8 +123,7 @@ if __name__ == "__main__":
     assert model is not None
 
     config = Config()
-    history = train(model, preprocess = model_name in models_requiring_preprocess)
+    history = train(model, preprocess=model_name in models_requiring_preprocess)
     # Save the history to plot later
     with open('histories/%s_%s.pkl' % (model.name, datetime.now()), 'wb') as f:
         pickle.dump(history, f)
-
