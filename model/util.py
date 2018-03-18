@@ -33,7 +33,7 @@ class_weight_dict = {k: max(author_counts.values()) / author_counts[k] for k in
 def swish(x):
     return x * K.sigmoid(x)
 
-def lr_callback():
+def get_lr_callback():
     return ReduceLROnPlateau(monitor='val_loss', factor=0.1, verbose=1,
                              patience=10, min_lr=1e-10)
 
