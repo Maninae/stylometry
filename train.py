@@ -7,7 +7,7 @@ from keras.optimizers import Adam
 from keras.models import load_model
 
 from model import stylometry_models as sm
-from model.util import get_checkpointer, class_weight_dict
+from model.util import get_checkpointer, lr_callback, class_weight_dict
 
 from utils.dataflow import load_data, preprocess_input
 
@@ -52,6 +52,7 @@ def train(model, preprocess=True):
                   metrics=config.metrics_list)
 
     checkpointer = get_checkpointer(model.name)
+    lr_reducer_on_plateau = lr_callback()
 
     history = model.fit(x=X_train,
                         y=Y_train,

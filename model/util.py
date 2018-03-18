@@ -1,5 +1,5 @@
 import keras.backend as K
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 # CONSTANTS
 _NUM_AUTHORS = 11
@@ -32,6 +32,10 @@ class_weight_dict = {k: max(author_counts.values()) / author_counts[k] for k in
 
 def swish(x):
     return x * K.sigmoid(x)
+
+def lr_callback():
+    return ReduceLROnPlateau(monitor='val_loss', factor=0.1, verbose=1,
+                             patience=10, min_lr=1e-10)
 
 
 custom_objects_dict = {
