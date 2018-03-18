@@ -13,7 +13,7 @@ PUNCS = '.,?!\'":;-()'
 def get_puncs_map():
     puncs = {c: i+1 for i, c in enumerate(PUNCS)}
     puncs['%'] = 0
-    with open('puncs_map.pkl', 'wb') as f:
+    with open('utils/puncs_map.pkl', 'wb') as f:
         pickle.dump(puncs, f)
     return puncs
 
@@ -24,7 +24,7 @@ def get_authors_map():
     authors = [a for a in os.listdir(TRAIN_DIR) if is_author(a)]
     authors.sort()
     authors_map = {a: i for i, a in enumerate(authors)}
-    with open('authors_map.pkl', 'wb') as f:
+    with open('utils/authors_map.pkl', 'wb') as f:
         pickle.dump(authors_map, f)
     return authors, authors_map
 
