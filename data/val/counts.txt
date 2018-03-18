@@ -1,0 +1,24 @@
+`--> ls Abraham_Lincoln | wc -l
+      52
+`--> ls Charlotte_Bronte | wc -l
+     106
+`--> ls Edgar_Allan_Poe | wc -l
+      60
+
+`--> ls James_Joyce | wc -l
+      49
+`--> ls Jonathan_Swift | wc -l
+      66
+`--> ls Mark_Twain | wc -l
+     132
+
+`--> ls O_Henry | wc -l
+     103
+`--> ls Robert_Louis_Stevenson | wc -l
+     227
+`--> ls Rudyard_Kipling | wc -l
+     161
+`--> ls Sir_Arthur_Conan_Doyle | wc -l
+     377
+`--> ls Walt_Whitman | wc -l
+      61

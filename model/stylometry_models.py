@@ -149,7 +149,7 @@ def __LSTM_model(nb_lstm_units,
               % (nb_units, lstm_dropout))
 
         # The last LSTM layer must have return_sequences=False.
-        if indx == len(nb_lstm_units):
+        if indx == len(nb_lstm_units)-1:
             return_sequences = False
 
         x = LSTM(nb_units,
