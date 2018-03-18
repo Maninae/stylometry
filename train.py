@@ -4,9 +4,10 @@ import pickle
 from datetime import datetime
 
 from keras.optimizers import Adam
+from keras.models import load_model
 
 from model import stylometry_models as sm
-from model.util import get_checkpointer, class_weight_dict
+from model.util import get_checkpointer, lr_callback, class_weight_dict
 
 from utils.dataflow import load_data, preprocess_input
 
@@ -37,17 +38,21 @@ config = Config()
 
 def train(model, preprocess=True):
     X_train, Y_train = load_data('train')
+    print(X_train.shape, Y_train.shape)
     X_val, Y_val = load_data('val')
 
     if preprocess:  # Preprocessing turns ints into one-hot vectors
         X_train = preprocess_input(X_train)
         X_val = preprocess_input(X_val)
 
+    print(X_train.shape)
+
     model.compile(loss=config.loss,
                   optimizer=config.optimizer,
                   metrics=config.metrics_list)
 
     checkpointer = get_checkpointer(model.name)
+    lr_reducer_on_plateau = lr_callback()
 
     history = model.fit(x=X_train,
                         y=Y_train,
@@ -92,10 +97,15 @@ def parse_arguments_from_command():
         help="optional path argument, if we want to load an existing model")
     parser.add_argument("--new_model", dest='model_name',
                         help="Type of model in model.py we want to run")
+    parser.add_argument("--epochs", dest='epochs', type=int,
+                        help="Num epochs to run for")
+    parser.add_argument("--batch_size", type=int,
+                        help="batch size during train/val")
 
     def validate_args(args):
         """ Validations that the args are correct """
-        assert args.model_name in valid_model_names
+        if args.model_name is not None:
+            assert args.model_name in valid_model_names
         assert not bool(args.stored_model_path and args.model_name)
 
     args = parser.parse_args()
@@ -117,11 +127,10 @@ if __name__ == "__main__":
     model_name = args.model_name
     stored_model_path = args.stored_model_path
 
-    skip_loading = True
+    skip_loading = False
     if stored_model_path is not None and not skip_loading:
         # TBD: Load an existing model
-        model_fn = None
-        model = None
+        model = load_model(stored_model_path)
     else:
         model_fn = getattr(sm, model_name)
         model = model_fn()
@@ -129,7 +138,12 @@ if __name__ == "__main__":
     assert model is not None
 
     config = Config()
+    if args.epochs is not None:
+        config.epochs = args.epochs
+    if args.batch_size is not None:
+        config.batch_size = args.batch_size
+
     history = train(model, preprocess=model_name in models_requiring_preprocess)
     # Save the history to plot later
-    with open('histories/%s_%s.pkl' % (model.name, datetime.now()), 'wb') as f:
+    with open('histories/%s/%s_%s.pkl' % (model.name, model.name, datetime.now()), 'wb') as f:
         pickle.dump(history, f)

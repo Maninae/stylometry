@@ -1,5 +1,5 @@
 import keras.backend as K
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 # CONSTANTS
 _NUM_AUTHORS = 11
@@ -33,6 +33,10 @@ class_weight_dict = {k: max(author_counts.values()) / author_counts[k] for k in
 def swish(x):
     return x * K.sigmoid(x)
 
+def lr_callback():
+    return ReduceLROnPlateau(monitor='val_loss', factor=0.1, verbose=1,
+                             patience=10, min_lr=1e-10)
+
 
 custom_objects_dict = {
     'swish': swish
@@ -41,7 +45,7 @@ custom_objects_dict = {
 
 def get_checkpointer(model_name):
     # Save everything, just in case
-    filepath = "weights/%s-{epoch:02d}-loss={loss:.4f}-vloss={val_loss:.4f}-tacc={acc:.3f}-vacc={val_acc:.3f}.h5" % model_name
+    filepath = "weights/%s/%s-ep{epoch:02d}-loss={loss:.4f}-vloss={val_loss:.4f}-tacc={acc:.3f}-vacc={val_acc:.3f}.h5" % (model_name, model_name)
     checkpointer = ModelCheckpoint(filepath=filepath,
                                    verbose=1,
                                    save_best_only=False)
