@@ -11,7 +11,6 @@ from model.util import get_checkpointer, class_weight_dict, get_lr_callback
 
 from utils.dataflow import load_data, preprocess_input
 
-
 valid_model_names = [fn.__name__ for fn in sm.testable_models]
 
 models_requiring_preprocess = [
