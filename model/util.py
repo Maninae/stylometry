@@ -35,7 +35,7 @@ def swish(x):
 
 def get_lr_callback():
     return ReduceLROnPlateau(monitor='val_loss', factor=0.1, verbose=1,
-                             patience=10, min_lr=1e-10)
+                             patience=20, cooldown=10, min_lr=1e-10)
 
 
 custom_objects_dict = {

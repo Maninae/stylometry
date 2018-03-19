@@ -110,16 +110,6 @@ def stacked_2_LSTM_model():
                         return_sequences=True,
                         model_name="stacked_2_LSTM_model")
 
-@testable
-def stacked_3_LSTM_model():
-    """ Two LSTMs stacked on top of one another, but learning less params each.
-    """
-    return __LSTM_model(nb_lstm_units=[128, 128, 128],
-                        nb_dense_units=64,
-                        lstm_dropout=0.2,
-                        dense_dropout=0.2,
-                        return_sequences=True,
-                        model_name="stacked_3_LSTM_model")
 
 def __LSTM_model(nb_lstm_units,
                  nb_dense_units,

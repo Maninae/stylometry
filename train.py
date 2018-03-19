@@ -15,8 +15,7 @@ valid_model_names = [fn.__name__ for fn in sm.testable_models]
 
 models_requiring_preprocess = [
     "vanilla_LSTM_model",
-    "stacked_2_LSTM_model",
-    "stacked_3_LSTM_model"
+    "stacked_2_LSTM_model"
 ]
 
 # Default config settings for model training
@@ -117,7 +116,6 @@ Usage:
 python3 train.py --new_model conv_model
 python3 train.py --new_model vanilla_LSTM_model
 python3 train.py --new_model stacked_2_LSTM_model
-python3 train.py --new_model stacked_3_LSTM_model
 """
 
 if __name__ == "__main__":
@@ -130,6 +128,7 @@ if __name__ == "__main__":
     if stored_model_path is not None and not skip_loading:
         # TBD: Load an existing model
         model = load_model(stored_model_path)
+        model_name = model.name # Because no argument populating model_name
     else:
         model_fn = getattr(sm, model_name)
         model = model_fn()
