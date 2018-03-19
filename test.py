@@ -34,7 +34,7 @@ def test(model, preprocess=True):
     confusion = confusion_matrix(y_true, y_pred)
     labeled_eval_output = zip(model.metrics_names + ['confusion'], eval_output + [confusion])
     # ret a list of [('loss', scalar), ('accuracy', <scalar>), ...]
-    return labeled_eval_output
+    return list(labeled_eval_output)
 
 
 ##############################################
