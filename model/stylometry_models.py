@@ -4,9 +4,12 @@ from keras.regularizers import l2
 
 from keras import backend as K
 
-from model.util import swish, custom_objects_dict
-from model.util import _NUM_AUTHORS, _NUM_TOKENS, _INPUT_LENGTH # (11, 12, 250)
-
+if __name__ == "__main__":
+    from util import swish, custom_objects_dict
+    from util import _NUM_AUTHORS, _NUM_TOKENS, _INPUT_LENGTH # (11, 12, 250)
+else:
+    from model.util import swish, custom_objects_dict
+    from model.util import _NUM_AUTHORS, _NUM_TOKENS, _INPUT_LENGTH # (11, 12, 250)
 
 testable_models = []
 
